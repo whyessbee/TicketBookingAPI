@@ -1,0 +1,43 @@
+{
+  "name": "ticketbookingapi",
+  "version": "1.0.0",
+  "description": "Bus ticket booking based APIs.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whyessbee/TicketBookingAPI.git"
+  },
+  "keywords": [
+    "NodeJs",
+    "MongoDB",
+    "APIs",
+    "Validations",
+    "Atlas"
+  ],
+  "author": "Yash Saran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/whyessbee/TicketBookingAPI/issues"
+  },
+  "homepage": "https://github.com/whyessbee/TicketBookingAPI#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.4",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/node": "^7.22.5",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-env": "^7.22.5"
+  }
+}
