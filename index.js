@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyparser from 'body-parser';
 import dotenv from 'dotenv';
+import route from './routes/operations.js'
 dotenv.config();
 
 /**
@@ -10,7 +11,7 @@ dotenv.config();
 try {
     const app=express()
     app.use(bodyparser.json());
-   // app.use('/api',apiroutes);
+    app.use('/api',route);
 
     mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true });
 
