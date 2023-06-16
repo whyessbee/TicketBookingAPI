@@ -8,8 +8,9 @@ dotenv.config();
 /**
  * Entry Point for the request
  */
+const app=express()
 try {
-    const app=express()
+    
     app.use(bodyparser.json());
     app.use('/api',route);
 
@@ -26,3 +27,4 @@ try {
     throw error;
 }
 
+export default app;
