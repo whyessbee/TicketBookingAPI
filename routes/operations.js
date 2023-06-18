@@ -62,6 +62,25 @@ route.get("/ticket/user/:ticketid", async (req, res) => {
   });
 });
 
+// route.put("ticket/yash",async(req,res)=>{
+//     console.log('Hi')
+//     Ticket.find({}).then(data=>{
+//         if(data.length>0){
+//             data.forEach(tkt=>{
+//                 tkt.is_booked=false;
+//                 tkt.save().then(data=>{
+//                     console.log(`Ticket with id - ${tkt._id} opened.`);
+//                 }).catch(err=>{
+//                     console.log(`Ticket with id - ${tkt._id} couldn't be opened.`);
+//                 })
+//             })
+//             res.status(200).json(data);
+//         }
+//         else
+//             res.send(200).json({'Result':'No data found!!!'})
+//     })
+// })
+
 route.get("/user/all", async (req, res) => {
     User.find({}).then((data) => {
       if (data) res.status(200).json(data);
@@ -69,8 +88,52 @@ route.get("/user/all", async (req, res) => {
     });
   });
 
-  route.put("/ticket/update",async(req,res)=>{
+  route.patch("/ticket/reset",async(req,res)=>{
+    Ticket.find({}).then(data=>{
+        if(data.length>0){
+            data.forEach(tkt=>{
+                tkt.is_booked=false;
+                tkt.save().then(data=>{
+                    console.log(`Ticket with id - ${tkt._id} opened.`);
+                }).catch(err=>{
+                    console.log(`Ticket with id - ${tkt._id} couldn't be opened.`);
+                })
+            })
+            res.status(200).json(data);
+        }
+        else
+            res.send(200).json({'Result':'No data found!!!'})
+    })
+  })
+
+  route.put("/ticket/update/:ticketid",async(req,res)=>{
     
+    Ticket.findById(req.params.ticketid).then(async (ticketData)=>{
+        if(ticketData){
+            ticketData.is_booked=req.body.isBooked;
+            let userId='';
+            if(req.body.passenger){
+                const user = new User(req.body.passenger);
+                const savedUser=await user.save(req.body.passenger)
+                userId=savedUser._id;
+            
+                if(userId){
+                    ticketData.passenger=userId;
+                    let savedTicket=await ticketData.save();
+                    res.status(200).json(savedTicket);
+                }
+            }
+            else{
+                ticketData.save().then(data=>{
+                    res.status(200).json(data);
+                })
+            }
+            
+        }
+        else{
+            res.status(200).json({'Result':'No ticket found!!!'});
+        }
+    })
   })
 
 export default route;
