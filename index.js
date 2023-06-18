@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyparser from 'body-parser';
 import dotenv from 'dotenv';
 import route from './routes/operations.js'
+import methodOverride from 'method-override'
 dotenv.config();
 
 /**
@@ -13,7 +14,12 @@ try {
     
     app.use(bodyparser.json());
     app.use('/api',route);
-
+    app.use(methodOverride());
+    app.use(function(err, req, res, next) {
+        console.error(err.stack);
+        next(err);
+        res.status(500).send(err.message);
+      });
     mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true });
 
     mongoose.connection

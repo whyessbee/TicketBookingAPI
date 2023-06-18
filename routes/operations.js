@@ -106,34 +106,50 @@ route.get("/user/all", async (req, res) => {
     })
   })
 
-  route.put("/ticket/update/:ticketid",async(req,res)=>{
-    
-    Ticket.findById(req.params.ticketid).then(async (ticketData)=>{
-        if(ticketData){
-            ticketData.is_booked=req.body.isBooked;
-            let userId='';
-            if(req.body.passenger){
-                const user = new User(req.body.passenger);
-                const savedUser=await user.save(req.body.passenger)
-                userId=savedUser._id;
-            
-                if(userId){
-                    ticketData.passenger=userId;
-                    let savedTicket=await ticketData.save();
-                    res.status(200).json(savedTicket);
+  route.put("/ticket/update/:ticketid",async(req,res,next)=>{
+    try {
+        
+        Ticket.findById(req.params.ticketid).then(async (ticketData)=>{
+            if(ticketData){
+                ticketData.is_booked=req.body.isBooked;
+                let userId='';
+                if(req.body.passenger){
+                    const user = new User(req.body.passenger);
+                    const savedUser=await user.save(req.body.passenger)
+                    .catch(err=>{
+                        next(err);
+                        //res.status(500).json(err.message)
+                    })
+                    userId=savedUser._id;
+                
+                    if(userId){
+                        ticketData.passenger=userId;
+                        let savedTicket=await ticketData.save().catch(err=>{
+                            next(err);
+                            //res.send(500).json(err.message);
+                        });
+                        res.status(200).json(savedTicket);
+                    }
                 }
+                else{
+                    ticketData.save().then(data=>{
+                        res.status(200).json(data);
+                    })
+                }
+                
             }
             else{
-                ticketData.save().then(data=>{
-                    res.status(200).json(data);
-                })
+                res.status(200).json({'Result':'No ticket found!!!'});
             }
+        }).catch(err=>{
+            next(err);
             
-        }
-        else{
-            res.status(200).json({'Result':'No ticket found!!!'});
-        }
-    })
+        })
+    } catch (error) {
+        console.err('Error in processing the request',error)
+        res.status(500).json(error);
+    }
+    
   })
 
 export default route;
