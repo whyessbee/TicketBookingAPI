@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyparser from 'body-parser';
 import dotenv from 'dotenv';
 import route from './routes/operations.js'
+import authRoute from './lib/auth.controller.js'
 import methodOverride from 'method-override'
 dotenv.config();
 
@@ -14,6 +15,7 @@ try {
     
     app.use(bodyparser.json());
     app.use('/api',route);
+    app.use('/auth',authRoute);
     app.use(methodOverride());
     app.use(function(err, req, res, next) {
         console.error(err.stack);

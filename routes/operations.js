@@ -1,6 +1,7 @@
 import express from "express";
 import Ticket from "../Models/Ticket.js";
 import User from "../Models/User.js";
+import verifyToken from "../lib/verify.controller.js"
 
 const route = express.Router();
 
@@ -88,22 +89,37 @@ route.get("/user/all", async (req, res) => {
     });
   });
 
-  route.patch("/ticket/reset",async(req,res)=>{
-    Ticket.find({}).then(data=>{
-        if(data.length>0){
-            data.forEach(tkt=>{
-                tkt.is_booked=false;
-                tkt.save().then(data=>{
-                    console.log(`Ticket with id - ${tkt._id} opened.`);
-                }).catch(err=>{
-                    console.log(`Ticket with id - ${tkt._id} couldn't be opened.`);
+  route.patch("/ticket/reset",verifyToken, async(req,res)=>{
+    if (!req.role) {
+        res.status(403)
+          .send({
+            message: "Invalid JWT token"
+          });
+      }
+      if (req.role == "admin") {
+        Ticket.find({}).then(data=>{
+            if(data.length>0){
+                data.forEach(tkt=>{
+                    tkt.is_booked=false;
+                    tkt.save().then(data=>{
+                        console.log(`Ticket with id - ${tkt._id} opened.`);
+                    }).catch(err=>{
+                        console.log(`Ticket with id - ${tkt._id} couldn't be opened.`);
+                    })
                 })
-            })
-            res.status(200).json(data);
-        }
-        else
-            res.send(200).json({'Result':'No data found!!!'})
-    })
+                res.status(200).json(data);
+            }
+            else
+                res.send(200).json({'Result':'No data found!!!'})
+        })
+        
+      } else {
+        res.status(403)
+          .send({
+            message: "Unauthorised access"
+          });
+      }
+    
   })
 
   route.put("/ticket/update/:ticketid",async(req,res,next)=>{
