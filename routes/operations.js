@@ -5,6 +5,14 @@ import verifyToken from "../lib/verify.controller.js";
 
 const route = express.Router();
 
+/**
+ * POST /ticket
+ * Creates a new ticket.
+ * Requires a valid JWT token.
+ * Body Parameters:
+ *   - seat_number: The seat number for the ticket.
+ * Returns the created ticket as JSON.
+ */
 route.post("/ticket", verifyToken, async (req, res, next) => {
   try {
     if (!req.id) {
@@ -13,7 +21,6 @@ route.post("/ticket", verifyToken, async (req, res, next) => {
       });
     }
     const ticket = new Ticket({ seat_number: req.body.seat_number });
-    //const user = new User(req.body.passenger);
 
     ticket.passenger = req.id;
     ticket
@@ -29,6 +36,11 @@ route.post("/ticket", verifyToken, async (req, res, next) => {
   }
 });
 
+/**
+ * GET /ticket/all
+ * Retrieves all tickets.
+ * Returns an array of tickets as JSON.
+ */
 route.get("/ticket/all", async (req, res, next) => {
   Ticket.find({})
     .then((data) => {
@@ -40,6 +52,13 @@ route.get("/ticket/all", async (req, res, next) => {
     });
 });
 
+/**
+ * GET /ticket/status/:ticketid
+ * Retrieves the status of a specific ticket by its ID.
+ * Path Parameters:
+ *   - ticketid: The ID of the ticket.
+ * Returns the ticket information as JSON.
+ */
 route.get("/ticket/status/:ticketid", async (req, res, next) => {
   Ticket.find({ _id: req.params.ticketid })
     .then((data) => {
@@ -51,6 +70,11 @@ route.get("/ticket/status/:ticketid", async (req, res, next) => {
     });
 });
 
+/**
+ * GET /ticket/open
+ * Retrieves all open (unbooked) tickets.
+ * Returns an array of open tickets as JSON.
+ */
 route.get("/ticket/open", async (req, res, next) => {
   Ticket.find({ is_booked: false })
     .then((data) => {
@@ -62,6 +86,11 @@ route.get("/ticket/open", async (req, res, next) => {
     });
 });
 
+/**
+ * GET /ticket/closed
+ * Retrieves all closed (booked) tickets.
+ * Returns an array of closed tickets as JSON.
+ */
 route.get("/ticket/closed", async (req, res, next) => {
   Ticket.find({ is_booked: true })
     .then((data) => {
@@ -73,6 +102,13 @@ route.get("/ticket/closed", async (req, res, next) => {
     });
 });
 
+/**
+ * GET /ticket/user/:ticketid
+ * Retrieves the user associated with a specific ticket by its ID.
+ * Path Parameters:
+ *   - ticketid: The ID of the ticket.
+ * Returns the user information as JSON.
+ */
 route.get("/ticket/user/:ticketid", async (req, res) => {
   Ticket.find({ _id: req.params.ticketid })
     .then((data) => {
@@ -101,25 +137,11 @@ route.get("/ticket/user/:ticketid", async (req, res) => {
     });
 });
 
-// route.put("ticket/yash",async(req,res)=>{
-//     console.log('Hi')
-//     Ticket.find({}).then(data=>{
-//         if(data.length>0){
-//             data.forEach(tkt=>{
-//                 tkt.is_booked=false;
-//                 tkt.save().then(data=>{
-//                     console.log(`Ticket with id - ${tkt._id} opened.`);
-//                 }).catch(err=>{
-//                     console.log(`Ticket with id - ${tkt._id} couldn't be opened.`);
-//                 })
-//             })
-//             res.status(200).json(data);
-//         }
-//         else
-//             res.send(200).json({'Result':'No data found!!!'})
-//     })
-// })
-
+/**
+ * GET /user/all
+ * Retrieves all users.
+ * Returns an array of users as JSON.
+ */
 route.get("/user/all", async (req, res) => {
   User.find({}).then((data) => {
     if (data) res.status(200).json(data);
@@ -127,6 +149,12 @@ route.get("/user/all", async (req, res) => {
   });
 });
 
+/**
+ * PATCH /ticket/reset
+ * Resets all tickets to open (unbooked) status.
+ * Requires a valid JWT token with admin role.
+ * Returns the updated tickets as JSON.
+ */
 route.patch("/ticket/reset", verifyToken, async (req, res) => {
   if (!req.role) {
     res.status(403).send({
@@ -157,6 +185,17 @@ route.patch("/ticket/reset", verifyToken, async (req, res) => {
   }
 });
 
+/**
+ * PUT /ticket/update/:ticketid
+ * Updates the status and passenger of a specific ticket.
+ * Requires a valid JWT token.
+ * Path Parameters:
+ *   - ticketid: The ID of the ticket.
+ * Body Parameters:
+ *   - isBooked: The updated status of the ticket.
+ *   - passenger: The updated passenger information.
+ * Returns the updated ticket as JSON.
+ */
 route.put("/ticket/update/:ticketid", verifyToken, async (req, res, next) => {
   try {
     Ticket.findById(req.params.ticketid)
