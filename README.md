@@ -31,7 +31,7 @@ To run this application, you need to have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone [(https://github.com/whyessbee/TicketBookingAPI.git)](https://github.com/whyessbee/TicketBookingAPI.git)
+   git clone [https://github.com/whyessbee/TicketBookingAPI.git](https://github.com/whyessbee/TicketBookingAPI.git)
    ```
 
 2. Install the dependencies:
