@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import route from "./routes/operations.js";
 import authRoute from "./lib/auth.controller.js";
 import methodOverride from "method-override";
+import reviewRoute from "./routes/review.js"
 
 dotenv.config();
 
@@ -22,7 +23,9 @@ try {
 
   // Routes
   app.use("/api", route); // Operations routes
+  app.use("/review",reviewRoute);
   app.use("/auth", authRoute); // Authentication routes
+  
 
   // Override HTTP methods
   app.use(methodOverride());
